@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_here_doc.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 13:54:35 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/08 21:33:15 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/20 16:58:19 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ char	*get_here_doc_content(int fd, char *limiter, char **str)
 		*str = ft_strjoin(tmp, "\n");
 		free(tmp);
 	}
-	double_free(*str, tab);
+	double_free(tab, *str);
 	return (NULL);
 }
 
@@ -53,7 +53,7 @@ int	init_here_doc(char *limiter, t_command_vars *com)
 	file_content = NULL;
 	file_content = get_here_doc_content(0, limiter, &file_content);
 	if (!file_content)
-		return (-1);
+		_here_doc_error_();
 	here_doc = open("here_doc", O_CREAT | O_RDWR | O_TRUNC, 0666);
 	if (here_doc == -1)
 	{
@@ -65,8 +65,10 @@ int	init_here_doc(char *limiter, t_command_vars *com)
 		free(file_content);
 		return (_error_('w'));
 	}
-	close(here_doc);
+	if (here_doc != -1)
+		close(here_doc);
 	here_doc = open("here_doc", O_RDWR);
-	free(file_content);
+	if (file_content)
+		free(file_content);
 	return (here_doc);
 }

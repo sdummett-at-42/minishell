@@ -6,13 +6,13 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 18:33:37 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/04 19:53:41 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/16 13:12:41 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_tokenize(char **args, t_token **head)
+int	ft_tokenize(char **args, t_token **head)
 {
 	int	i;
 	int	ret;
@@ -31,8 +31,9 @@ void	ft_tokenize(char **args, t_token **head)
 		else
 			ret = get_cmd(args, &i, head);
 		if (ret > 0)
-			return ;
+			return (ret);
 		if (args[i])
 			++i;
 	}
+	return (0);
 }

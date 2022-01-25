@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parser.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/30 18:30:44 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/08 22:13:48 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:18:51 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,13 +78,15 @@ static void	save_last_cmd_word(t_token *lst)
 int	ft_parser(char *cmd)
 {
 	char		**args;
-	char		**environ;
 	int			nb_cmds;
 	t_token		*head;
 
 	head = NULL;
 	args = get_processed_cmd_line(cmd);
-	ft_tokenize(args, &head);
+	if (args == NULL)
+		return (0);
+	if (ft_tokenize(args, &head) != 0)
+		return (ft_free_tab(args, ERROR));
 	save_last_cmd_word(head);
 	ft_free_tab(args, 0);
 	group_cmd_and_args(&head);
@@ -92,9 +94,10 @@ int	ft_parser(char *cmd)
 	if (!head)
 		return (-1);
 	nb_cmds = count_nb_cmds(head);
-	environ = get_environment();
-	pipex_exec_test(nb_cmds, &head, environ);
-	free_environ(environ);
+	g_variables->environ = get_environment();
+	pipex_exec(nb_cmds, &head, g_variables->environ);
+	free_environ(g_variables->environ);
+	g_variables->environ = NULL;
 	head = NULL;
 	return (0);
 }

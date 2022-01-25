@@ -6,7 +6,7 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 17:26:43 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/03 21:31:00 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/19 22:02:02 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,10 @@ int	ft_elem_pushback(t_token **head, t_token *elem)
 	if (head == NULL || elem == NULL)
 		return (-1);
 	else if (*head == NULL)
+	{
 		*head = elem;
+		return (0);
+	}
 	else
 	{
 		tmp = *head;

@@ -6,7 +6,7 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 16:41:27 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/08 21:51:33 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/19 22:36:48 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static int	exec_cd_with_home_var(void)
 	return (0);
 }
 
-static void	edit_env(char *olddirectory)
+void	edit_env(char *olddirectory)
 {
 	char		*cwd;
 	t_variable	*env_oldpwd;
@@ -42,11 +42,17 @@ static void	edit_env(char *olddirectory)
 	env_oldpwd = get_variable(g_variables->env, "OLDPWD");
 	env_pwd = get_variable(g_variables->env, "PWD");
 	if (env_oldpwd != NULL)
+	{
+		free(env_oldpwd->value);
 		env_oldpwd->value = olddirectory;
+	}
 	else
 		free(olddirectory);
 	if (env_pwd != NULL)
+	{
+		free(env_pwd->value);
 		env_pwd->value = cwd;
+	}
 	else
 		free(cwd);
 }
@@ -75,27 +81,23 @@ static int	too_many_args_error(void)
 
 int	ft_cd(char **args)
 {
-	char	*str;
 	char	*oldpwd;
+	int		ret;
 
+	ret = 0;
 	if (has_too_many_args(args))
 		return (too_many_args_error());
 	oldpwd = call_getcwd();
 	if (args == NULL || *args == NULL)
 	{
 		if (exec_cd_with_home_var() == 1)
-			return (1);
-		edit_env(oldpwd);
-	}
-	else
-	{
-		if (chdir(args[0]) < 0)
 		{
-			str = strerror(errno);
-			printf("cd: %s: %s\n", str, args[0]);
 			return (1);
+			free(oldpwd);
 		}
 		edit_env(oldpwd);
 	}
-	return (0);
+	else
+		do_cd(args, oldpwd, &ret);
+	return (ret);
 }

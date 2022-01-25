@@ -6,25 +6,11 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 17:46:59 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/08 22:09:51 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/19 22:00:03 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	get_nb_args(t_token *head)
-{
-	int		nb_args;
-
-	nb_args = 0;
-	while (head && head->type != PIPE)
-	{
-		if (head->type == CMD_SUFFIX)
-			++nb_args;
-		head = head->next;
-	}
-	return (nb_args);
-}
 
 void	get_args(t_token *head)
 {
@@ -46,6 +32,20 @@ void	get_args(t_token *head)
 		tmp = tmp->next;
 	}
 	head->cmd[++i] = NULL;
+}
+
+static void	free_t_token(t_token *tofree)
+{
+	t_token	*tmp;
+
+	while (tofree != NULL)
+	{
+		tmp = tofree;
+		tofree = tofree->next;
+		free(tmp->cmd);
+		free(tmp->value);
+		free(tmp);
+	}
 }
 
 t_token	*group_cmd_and_args(t_token **head)
@@ -73,6 +73,7 @@ t_token	*group_cmd_and_args(t_token **head)
 		previous = tmp;
 		tmp = tmp->next;
 	}
+	free_t_token(tmp);
 	return (*head);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   close_pipes.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 13:55:28 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/08 21:32:49 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/15 09:50:10 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@
 
 int	close_pipes(int fd_1, int fd_2)
 {
-	close(fd_1);
-	close(fd_2);
+	if (fd_1 != -1)
+		close(fd_1);
+	if (fd_2 != -1)
+		close(fd_2);
 	return (0);
 }
 
@@ -31,7 +33,8 @@ void	close_fd_chain(t_fd_chain *head, t_command_vars *com)
 		tmp = head->next;
 		if (com->is_here_doc)
 			unlink("here_doc");
-		close(head->fd);
+		if (head->fd != -1)
+			close(head->fd);
 		free(head->file_name);
 		free(head);
 		head = tmp;
@@ -62,7 +65,8 @@ void	close_unused_fd_chain(t_fd_chain **head)
 	while (*head != NULL && (*head)->next != NULL)
 	{
 		*head = (*head)->next;
-		close(tmp->fd);
+		if (tmp->fd != -1)
+			close(tmp->fd);
 		free(tmp->file_name);
 		free(tmp);
 		tmp = *head;

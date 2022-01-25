@@ -6,7 +6,7 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/17 11:03:46 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/11 15:26:22 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/20 17:21:27 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	pipex(t_command_vars *commands, t_token **head)
 			create_pipe(pipe_fds, commands);
 		init_fd_to_commands(*head, commands);
 		if (commands->nb == 1 && is_main_process_builtin(commands))
-			exec_builtin(commands);
+			exec_builtin(commands, head);
 		else
 			fork_and_execute(commands, pipe_fds, i, head);
 		advance_linked_list_ptr(head);
@@ -74,19 +74,30 @@ int	pipex(t_command_vars *commands, t_token **head)
 	return (0);
 }
 
-int	pipex_exec_test(int nb_args, t_token **head, char **environ)
+static void	init_t_command_vars(t_command_vars *cmd,
+		char **environ, int nb_args)
+{
+	cmd->in_head = NULL;
+	cmd->out_head = NULL;
+	cmd->name = NULL;
+	cmd->paths = get_paths(environ);
+	cmd->env = environ;
+	cmd->nb = nb_args;
+	cmd->input_fd = 0;
+	cmd->output_fd = 1;
+	cmd->pid = 0;
+	cmd->prev_output = 0;
+	cmd->is_here_doc = false;
+	cmd->is_main_process_cmd = false;
+	cmd->is_main_process_cmd = false;
+	cmd->is_assign = false;
+}
+
+int	pipex_exec(int nb_args, t_token **head, char **environ)
 {
 	t_command_vars	commands;
 
-	commands.paths = get_paths(environ);
-	commands.input_fd = 0;
-	commands.output_fd = 1;
-	commands.env = environ;
-	commands.nb = nb_args;
-	commands.in_head = NULL;
-	commands.out_head = NULL;
-	commands.is_here_doc = false;
-	commands.is_main_process_cmd = false;
+	init_t_command_vars(&commands, environ, nb_args);
 	if (commands.nb == 0 && *head != NULL)
 	{
 		init_fd_to_commands(*head, &commands);

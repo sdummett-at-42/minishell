@@ -6,7 +6,7 @@
 #    By: nammari <nammari@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/09/29 21:34:46 by sdummett          #+#    #+#              #
-#    Updated: 2021/12/11 15:34:56 by nammari          ###   ########.fr        #
+#    Updated: 2021/12/20 17:26:03 by nammari          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,9 +21,8 @@ RED			= \033[0;31m
 YEL			= \033[0;33m
 GRN			= \033[0;32m
 RM			= rm -rf
-CC			= gcc
-CFLAGS		= -Wall -Werror -Wextra $(MEM_CHECK)
-MEM_CHECK	= -fsanitize=address
+CC			= clang
+CFLAGS		= -Wall -Werror -Wextra
 NAME		= minishell
 SRCS_DIR	= srcs/
 
@@ -34,10 +33,10 @@ ERRORS_FILES = $(addprefix errors/, error_management.c)
 TOKENIZE_FILES = $(addprefix tokenize/, checkers_redirection.c free_token_lst.c \
 get_cmd_suffix.c get_cmd.c init_function_pointer.c group_cmd_and_args.c \
 get_pipe.c has_parse_errors.c create_and_push_back.c \
- ft_tokenize.c get_assignment.c get_redirection_op.c)
+ ft_tokenize.c get_assignment.c get_redirection_op.c get_nb_args.c)
 PARSING_FILES = $(addprefix parsing/, ft_parser.c count_words_nb.c \
 get_processed_cmd_line.c get_word.c split_cmd_line.c replace_dollar_word.c \
-search_dollar_word.c)
+search_dollar_word.c capture_word.c)
 EXECUTION_FILES = $(addprefix el_execution/, pipex_execution.c close_pipes.c \
 error_management.c free_memory.c get_paths.c init_fd.c init_here_doc.c \
 wait_children.c fd_chained_list.c get_init_command.c exec_builtin.c command_execution.c \
@@ -45,7 +44,7 @@ signal.c)
 BUILTINS_FILES = $(addprefix builtins/, ft_cd.c ft_echo.c ft_env.c ft_exit.c \
 			ft_export.c ft_pwd.c ft_unset.c add_variable.c \
 			get_variable.c call_getcwd.c get_greatest_len.c is_valid_identifier.c \
-			get_environment.c assign_var.c get_exit_status.c)
+			get_environment.c assign_var.c get_exit_status.c ft_cd_utils.c do_cd.c)
 HISTORY_FILES = $(addprefix history/, update_history.c)
 UTILS_FILES = $(addprefix utils/, ft_strdup_index.c)
 INIT_FILES = $(addprefix init/, shell_init.c init_env.c set_basic_env.c)
@@ -101,3 +100,6 @@ fclean: clean
 	@printf "$(WHT)[$(YEL)$(NAME) BINARIES REMOVED$(WHT)]\n"
 
 re: fclean all
+
+.PHONY: clean fclean re all
+

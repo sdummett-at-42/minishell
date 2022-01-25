@@ -3,19 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   init.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
+/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 17:25:52 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/11 15:37:04 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/18 13:01:55 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef INIT_H
 # define INIT_H
 
-/*
-** Environment structure
-*/
 typedef struct s_variable
 {
 	char				*name;
@@ -23,9 +20,6 @@ typedef struct s_variable
 	struct s_variable	*next;
 }	t_variable;
 
-/*
-** Variables
-*/
 typedef struct s_vars
 {
 	t_variable	*env;
@@ -33,13 +27,11 @@ typedef struct s_vars
 	int			last_exit_status;
 	char		*prog_name;
 	char		*last_cmd_word;
+	char		**environ;
 	bool		is_child_to_kill;
 	int			my_pid;
 }	t_vars;
 
-/* 
-** Environment variables is a global linked list
-*/
 extern t_vars	*g_variables;
 
 int				shell_init(char **av, char **envp);

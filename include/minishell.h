@@ -6,7 +6,7 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/16 16:50:54 by noufel            #+#    #+#             */
-/*   Updated: 2021/12/11 15:39:10 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/20 15:51:30 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int				ft_pwd(char **args);
 int				ft_export(char **args);
 int				ft_unset(char **args);
 int				ft_env(char **args);
-int				ft_exit(char **args);
+int				ft_exit(char **args, t_token **head, t_command_vars *command);
 
 /*
 ** Builtins utils
@@ -88,6 +88,11 @@ bool			is_valid_identifier(char *str, int builtin);
 char			**get_environment(void);
 void			assign_var(char *keyvalue);
 int				get_exit_status(char *str, bool *arg_is_numeric);
+int				exec_cd_with_cdpath(char *str);
+char			*cat_path(char *str1, char *str2);
+void			free_array(char **tab);
+void			do_cd(char **args, char *oldpwd, int *ret);
+void			edit_env(char *olddirectory);
 
 // ------------- Parsing -----------------
 t_ast			*ft_create_ast(char *cmd_line);
@@ -97,7 +102,7 @@ void			get_op_elem(void);
 int				get_index_operator(char *arg);
 
 // ------------- Tokenizer --------------------
-void			ft_tokenize(char **args, t_token **head);
+int				ft_tokenize(char **args, t_token **head);
 int				check_operator_errors(char **args);
 int				check_if_multi_operator(char **args);
 void			init_function_pointer(int (*get_redirection[])
@@ -106,15 +111,17 @@ t_token			*group_cmd_and_args(t_token **head);
 t_token			*map_lst_till_pipe_or_eol(t_token **head);
 t_token			*group_assign(t_token **head);
 void			free_assign(t_token **head);
+int				get_nb_args(t_token *head);
 
 // ------------- Pre processing-------------------
-int				count_words_nb(char *cmd_line);
+int				count_words_nb(char *cmd_line, int wrd_count);
 char			**get_processed_cmd_line(char *cmd_line);
 void			split_cmd_line(char *cmd_line, char **args,
-					int words_nb);
+					int j);
 char			*get_word(char *cmd_line, int word_length);
-char			*search_dollar_word(char *word);
-char			*replace_dollar_word(char *word, char *dollar_word);
+char			*get_dollar_word(char **word);
+char			*replace_dollar_word(char *word, char *dollar_word, int index);
+char			*capture_word(char *cmd_line, int *i, int *j);
 
 // Get operator
 int				get_redir_out_trunc(char **args, int *index, t_token **head);
@@ -150,12 +157,13 @@ void			free_token_lst(t_token *lst);
 // ------------------ Error functions ------------
 int				ft_catch_error(bool error_check, char *str, t_token **head);
 int				ft_free_tab(char **tab, int error_cause);
+int				ft_error(char *str);
 
 // ------------------------- Free ------------------
 void			free_ressources(void);
 void			free_environ(char **tofree);
 void			free_link(t_variable *tofree);
-
+void			free_t_variable_struct(t_variable *tofree);
 // ------------------------ Signal ----------------
 void			signal_func_call(void);
 void			kill_child(int signo);
@@ -164,6 +172,7 @@ void			sighandler(int signo);
 
 // Test functions
 void			print_token(t_token *head);
+void			print_args(char **args);
 
 // Main func
 int				minishell(void);

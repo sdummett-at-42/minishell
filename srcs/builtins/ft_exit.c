@@ -6,7 +6,7 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 16:41:46 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/09 10:50:42 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/19 22:09:38 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,29 @@ static void	num_args_req_msg(char *str)
 		ft_strlen(": numeric argument required\n"));
 }
 
-int	ft_exit(char **args)
+static void	free_tab(char **tab)
+{
+	int	i;
+
+	i = 0;
+	while (tab[i] != NULL)
+	{
+		free(tab[i]);
+		i++;
+	}
+	free(tab);
+}
+
+static void	free_fall(t_token **head, t_command_vars *commands)
+{
+	free_tab(commands->paths);
+	free_tab(commands->name);
+	free_token_lst(*head);
+	free_environ(g_variables->environ);
+	free_ressources();
+}
+
+int	ft_exit(char **args, t_token **head, t_command_vars *commands)
 {
 	int		exit_status;
 	bool	arg_is_numeric;
@@ -37,7 +59,7 @@ int	ft_exit(char **args)
 	if (args[0] == NULL)
 	{
 		exit_status = g_variables->last_exit_status;
-		free_ressources();
+		free_fall(head, commands);
 		exit(exit_status);
 	}
 	arg_is_numeric = true;
@@ -49,6 +71,6 @@ int	ft_exit(char **args)
 	}
 	if (arg_is_numeric == false)
 		num_args_req_msg(args[0]);
-	free_ressources();
+	free_fall(head, commands);
 	exit(exit_status);
 }

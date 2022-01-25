@@ -6,7 +6,7 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/15 13:55:21 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/06 13:03:13 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/20 16:14:00 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,78 +40,57 @@ bool	skip_operator_and_increment(char *cmd_line, int *i, int *j)
 	return (false);
 }
 
-char	*get_word_without_quotes(char *cmd_line, int *new_index)
+static void	jump_to_next_quote(char *cmd, int *i, int *j, char q)
 {
-	int		i;
-	int		j;
-	char	*word;
-	char	quote_type;
-
-	i = 0;
-	j = 0;
-	quote_type = cmd_line[i];
-	cmd_line++;
-	while (cmd_line[i] != '\0' && cmd_line[i] != quote_type)
-		++i;
-	word = malloc(sizeof(char) * (i + 1));
-	if (!word)
-		return (NULL);
-	while (j < i)
+	++*i;
+	++*j;
+	while (cmd[*i] != '\0')
 	{
-		word[j] = cmd_line[j];
-		++j;
+		increment_i_and_j(i, j);
+		if (cmd[*i] == q)
+		{
+			increment_i_and_j(i, j);
+			if (is_quote(cmd[*i]))
+				jump_to_next_quote(cmd, i, j, cmd[*i]);
+			else
+				while (!is_whitespace(cmd[*i]) && !is_operator(cmd[*i])
+					&& cmd[*i] != '\0')
+					increment_i_and_j(i, j);
+			return ;
+		}
 	}
-	word[j] = '\0';
-	*new_index = *new_index + j + 2;
-	return (word);
 }
 
-char	*get_between_quotes_word(char *cmd_line, int *new_index)
+void	gaining_lines(char *cmd_line, int *i, int *j)
 {
-	int		i;
-	char	*word;
-	char	*dollar_word;
-
-	i = 0;
-	word = get_word_without_quotes(cmd_line, new_index);
-	if (*cmd_line == '\'')
-		return (word);
-	while (word[i])
-	{
-		dollar_word = search_dollar_word(word + i);
-		if (dollar_word == NULL)
-			return (word);
-		word = replace_dollar_word(word, dollar_word);
-		if (word == NULL)
-			return (NULL);
-		while (word[i] != '\0' && word[i] != '$')
-			++i;
-	}
-	return (word);
+	while (is_whitespace(cmd_line[*i]))
+		++*i;
+	if (is_quote(cmd_line[*i]))
+		jump_to_next_quote(cmd_line, i, j, cmd_line[*i]);
+	else
+		while ((is_alpha_num(cmd_line[*i]) || is_quote(cmd_line[*i]))
+			&& !is_operator(cmd_line[*i]))
+			increment_i_and_j(i, j);
 }
 
-void	split_cmd_line(char *cmd_line, char **args, int words_nb)
+void	split_cmd_line(char *cmd_line, char **args, int j)
 {
 	int		i;
-	int		j;
-	int		k;
 
 	i = 0;
-	k = 0;
 	while (cmd_line[i])
 	{
 		j = 0;
-		while (is_whitespace(cmd_line[i]))
-			++i;
-		while (is_alpha_num(cmd_line[i]) && !is_operator(cmd_line[i]))
-			increment_i_and_j(&i, &j);
+		gaining_lines(cmd_line, &i, &j);
 		if (j > 0)
-			args[k++] = get_word(cmd_line + i, j);
-		else if (is_quote(cmd_line[i]))
-			args[k++] = get_between_quotes_word(cmd_line + i, &i);
+			*args++ = get_word(cmd_line + i, j);
 		else
+		{
 			if (skip_operator_and_increment(cmd_line, &i, &j))
-				args[k++] = get_word(cmd_line + i, j);
+				*args++ = get_word(cmd_line + i, j);
+			else if (cmd_line[i] != '\0' && !is_whitespace(cmd_line[i]))
+				*args++ = capture_word(cmd_line, &i, &j);
+		}
 	}
-	args[words_nb] = NULL;
+	*args = NULL;
 }

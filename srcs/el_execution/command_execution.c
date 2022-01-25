@@ -6,19 +6,34 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 22:17:28 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/11 15:28:43 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/20 17:21:11 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static void	free_ressources_error(void)
+{
+	free_environ(g_variables->environ);
+	free_t_variable_struct(g_variables->env);
+	free_t_variable_struct(g_variables->global);
+	free(g_variables->last_cmd_word);
+	free(g_variables);
+}
+
 int	exit_process(t_command_vars *commands, int pipe_fds[2], t_token *head)
 {
-	put_error(commands->name[0]);
-	close(pipe_fds[0]);
+	if (commands->name[0] != NULL)
+		put_error(commands->name[0]);
+	else
+		put_error("error ");
+	if (pipe_fds[0] != -1)
+		close(pipe_fds[0]);
 	close_pipes(0, 1);
-	mem_free(commands->paths, 0, commands);
 	free_token_lst(head);
+	mem_free(commands->paths, 0, commands);
+	free_ressources_error();
+	ft_free_tab(commands->name, 0);
 	exit(127);
 }
 
@@ -86,7 +101,7 @@ int	fork_and_execute(t_command_vars *com, int pipe_fds[2],
 			link_pipe_to_fd(com->prev_output, com->output_fd);
 		else
 			link_pipe_to_fd(com->prev_output, pipe_fds[1]);
-		if (exec_builtin(com) != -1)
+		if (exec_builtin(com, head) != -1)
 			exit_builtin_exec(pipe_fds, com->prev_output, com, head);
 		exec_command(com->paths, com->name, com);
 		exit_process(com, pipe_fds, *head);

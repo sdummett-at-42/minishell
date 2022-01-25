@@ -6,7 +6,7 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/05 14:57:04 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/09 10:36:54 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/18 16:40:57 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	free_environ(char **tofree)
 	unsigned int	i;
 
 	i = 0;
+	if (tofree == NULL)
+		return ;
 	while (tofree[i] != NULL)
 	{
 		free(tofree[i]);
@@ -46,7 +48,7 @@ void	free_environ(char **tofree)
 	free(tofree);
 }
 
-static void	free_t_variable_struct(t_variable *tofree)
+void	free_t_variable_struct(t_variable *tofree)
 {
 	t_variable	*next_link;
 
@@ -63,8 +65,12 @@ static void	free_t_variable_struct(t_variable *tofree)
 void	free_ressources(void)
 {
 	free_t_variable_struct(g_variables->env);
+	g_variables->env = NULL;
 	free_t_variable_struct(g_variables->global);
+	g_variables->global = NULL;
 	free(g_variables->last_cmd_word);
+	g_variables->last_cmd_word = NULL;
 	free(g_variables);
+	g_variables = NULL;
 	rl_clear_history();
 }

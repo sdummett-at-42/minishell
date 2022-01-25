@@ -6,7 +6,7 @@
 /*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/25 09:37:33 by noufel            #+#    #+#             */
-/*   Updated: 2021/12/09 13:48:21 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/19 21:12:16 by sdummett         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ typedef struct s_command {
 t_fd_chain	*create_elem(int fd, char *file_name);
 void		exit_builtin_exec(int pipe[2], int prev_output,
 				t_command_vars *com, t_token **head);
-int			pipex_exec_test(int nb_args, t_token **head, char **environ);
+int			pipex_exec(int nb_args, t_token **head, char **environ);
 int			elem_pushback(t_fd_chain **head, t_fd_chain *elem);
 int			_error_(char source);
 int			_here_doc_error_(void);
@@ -68,7 +68,7 @@ void		advance_linked_list_ptr(t_token **head);
 void		init_commands_struct(t_command_vars *commands);
 void		init_vars_to_minus_one(int *i, int pipe_fds[2], int *prev_output);
 char		**get_command(t_token **head);
-int			exec_builtin(t_command_vars *commands);
+int			exec_builtin(t_command_vars *commands, t_token **head);
 int			fork_and_execute(t_command_vars *com, int pipe_fds[2],
 				int index, t_token **head);
 int			link_pipe_to_fd(int in, int out);

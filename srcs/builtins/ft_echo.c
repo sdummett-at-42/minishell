@@ -6,7 +6,7 @@
 /*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/20 16:41:40 by sdummett          #+#    #+#             */
-/*   Updated: 2021/12/06 16:21:19 by nammari          ###   ########.fr       */
+/*   Updated: 2021/12/20 16:03:39 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,12 @@ int	ft_echo(char **args)
 	i = skip_options(args, &has_option);
 	while (args[i] != NULL)
 	{
-		printf("%s", args[i]);
+		write(1, args[i], ft_strlen(args[i]));
 		i++;
 		if (args[i] != NULL)
-			printf(" ");
+			write(1, " ", 1);
 	}
 	if (has_option == false)
-		printf("\n");
+		write(1, "\n", 1);
 	return (0);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wait_children.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/23 14:03:29 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/08 21:53:48 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/20 15:07:13 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,11 @@ int	wait_for_children(t_command_vars *com)
 		if (WIFEXITED(status))
 			last_exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
+		{
 			last_exit_status = WTERMSIG(status) + 128;
+			if (last_exit_status == 130)
+				printf("\n");
+		}
 		++i;
 	}
 	return (last_exit_status);

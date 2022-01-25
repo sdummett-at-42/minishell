@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error_management.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: sdummett <sdummett@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nammari <nammari@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 17:38:04 by nammari           #+#    #+#             */
-/*   Updated: 2021/12/03 21:19:33 by sdummett         ###   ########.fr       */
+/*   Updated: 2021/12/16 13:59:02 by nammari          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@ int	ft_catch_error(bool error_check, char *str, t_token **head)
 		return (MALLOC_ERROR);
 	}
 	return (0);
+}
+
+int	ft_error(char *str)
+{
+	ft_putstr_fd(str, 2);
+	return (ERROR);
 }
 
 int	ft_free_tab(char **tab, int error_cause)
