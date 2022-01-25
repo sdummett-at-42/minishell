@@ -2,7 +2,7 @@
 
 This is a simple shell, like bash or zsh.
 
-## Contributors
+## Authors
 
 👤 **Noufel**
 
